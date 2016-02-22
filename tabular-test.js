@@ -1,23 +1,27 @@
+Users = new Mongo.Collection("users");
+
+TabularTables = {};
+
+TabularTables.Users = new Tabular.Table({
+    name: "Users",
+    collection: Users,
+    columns: [
+        {data: 'firstName', title: 'First name'},
+        {data: 'lastName', title: 'Last name'},
+        {data: 'email', title: 'E-Mail'},
+        {tmpl: Meteor.isClient && Template.userActionsCell, title:'Actions'}
+    ]
+});
+
 if (Meteor.isClient) {
-  // counter starts at 0
-  Session.setDefault('counter', 0);
 
-  Template.hello.helpers({
-    counter: function () {
-      return Session.get('counter');
+  Template.userActionsCell.events({
+    'click .delete': function () {
+      if (window.confirm("Should we really delete this user?")) {
+        Users.remove(this._id);
+      }
     }
   });
 
-  Template.hello.events({
-    'click button': function () {
-      // increment the counter when button is clicked
-      Session.set('counter', Session.get('counter') + 1);
-    }
-  });
 }
 
-if (Meteor.isServer) {
-  Meteor.startup(function () {
-    // code to run on server at startup
-  });
-}
